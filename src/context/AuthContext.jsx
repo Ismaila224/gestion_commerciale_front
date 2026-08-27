@@ -10,7 +10,7 @@ import {
     login as loginService,
     register as registerService,
     logout as logoutService,
-} from "../services/authService";
+} from "../services/AuthService";
 
 const AuthContext = createContext(null);
 
