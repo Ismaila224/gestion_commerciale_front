@@ -31,23 +31,36 @@ function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    const chargerDashboard = async (refresh = false) => {
+    useEffect(() => {
+        let actif = true;
+
+        getDashboardStats()
+            .then((res) => {
+                if (actif) setData(res);
+            })
+            .catch((error) => {
+                console.error("Erreur Dashboard :", error);
+            })
+            .finally(() => {
+                if (actif) setLoading(false);
+            });
+
+        return () => {
+            actif = false;
+        };
+    }, []);
+
+    const actualiserDashboard = async () => {
         try {
-            if (refresh) setRefreshing(true);
-            else setLoading(true);
+            setRefreshing(true);
             const res = await getDashboardStats();
             setData(res);
         } catch (error) {
             console.error("Erreur Dashboard :", error);
         } finally {
-            setLoading(false);
             setRefreshing(false);
         }
     };
-
-    useEffect(() => {
-        chargerDashboard();
-    }, []);
 
     if (loading) {
         return (
@@ -157,7 +170,7 @@ function Dashboard() {
                 <Box sx={{ display: "flex", gap: 1 }}>
                     <Tooltip title="Actualiser">
                         <IconButton
-                            onClick={() => chargerDashboard(true)}
+                            onClick={actualiserDashboard}
                             disabled={refreshing}
                             sx={{
                                 width: 40,
